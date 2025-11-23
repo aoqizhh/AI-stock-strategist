@@ -1,0 +1,275 @@
+<main class="min-h-screen text-gray-200 p-4 sm:p-6 lg:p-8 font-sans">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Header -->
+    <header class="text-center mb-8 md:mb-12">
+      <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">
+        AI 股票策略师
+      </h1>
+      <p class="mt-2 text-lg text-gray-400">
+        为您的股票持仓获取AI驱动的深度分析与历史回测
+      </p>
+    </header>
+
+    <!-- Input Form -->
+    <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8 shadow-lg backdrop-blur-sm">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-6 items-end">
+        <div>
+          <label for="ticker" class="block text-sm font-medium text-gray-300 mb-1">股票代码</label>
+          <input
+            id="ticker"
+            type="text"
+            [value]="ticker()"
+            (input)="handleTickerChange($event)"
+            placeholder="例如: NVDA, AAPL"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
+          >
+        </div>
+        <div>
+          <label for="currentPrice" class="block text-sm font-medium text-gray-300 mb-1">实时价格 ($)</label>
+          <input
+            id="currentPrice"
+            type="number"
+            [value]="currentPrice()"
+            (input)="handleCurrentPriceChange($event)"
+            placeholder="例如: 178.88"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
+          >
+        </div>
+        <div>
+          <label for="investmentAmount" class="block text-sm font-medium text-gray-300 mb-1">计划投资总额 ($)</label>
+          <input
+            id="investmentAmount"
+            type="number"
+            [value]="investmentAmount() ?? ''"
+            (input)="handleInvestmentChange($event)"
+            placeholder="例如: 10000"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
+          >
+        </div>
+        <div>
+          <label for="positionPrice" class="block text-sm font-medium text-gray-300 mb-1">持仓价格 ($)</label>
+          <input
+            id="positionPrice"
+            type="number"
+            [value]="positionPrice() ?? ''"
+            (input)="handlePositionPriceChange($event)"
+            placeholder="选填，如: 150.50"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
+          >
+        </div>
+        <div>
+          <label for="investmentHorizon" class="block text-sm font-medium text-gray-300 mb-1">投资周期</label>
+          <select 
+            id="investmentHorizon" 
+            [value]="investmentHorizon()" 
+            (change)="handleHorizonChange($event)"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200 appearance-none bg-no-repeat"
+            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27 fill=%27none%27 stroke=%27%239ca3af%27 stroke-width=%271.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpath d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e'); background-position: right 0.5rem center; background-size: 1.5em 1.5em;"
+          >
+            <option value="短期">短期</option>
+            <option value="中期">中期</option>
+            <option value="长期">长期</option>
+          </select>
+        </div>
+         <div>
+          <label for="riskTolerance" class="block text-sm font-medium text-gray-300 mb-1">风险偏好</label>
+          <select 
+            id="riskTolerance" 
+            [value]="riskTolerance()" 
+            (change)="handleRiskChange($event)"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200 appearance-none bg-no-repeat"
+            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27 fill=%27none%27 stroke=%27%239ca3af%27 stroke-width=%271.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpath d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e'); background-position: right 0.5rem center; background-size: 1.5em 1.5em;"
+          >
+            <option value="保守">保守</option>
+            <option value="稳健">稳健</option>
+            <option value="激进">激进</option>
+          </select>
+        </div>
+        <div>
+          <label for="volatilityPreference" class="block text-sm font-medium text-gray-300 mb-1">市场波动偏好</label>
+          <select 
+            id="volatilityPreference" 
+            [value]="volatilityPreference()" 
+            (change)="handleVolatilityChange($event)"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200 appearance-none bg-no-repeat"
+            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27 fill=%27none%27 stroke=%27%239ca3af%27 stroke-width=%271.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpath d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e'); background-position: right 0.5rem center; background-size: 1.5em 1.5em;"
+          >
+            <option value="偏好低波动">偏好低波动</option>
+            <option value="接受中等波动">接受中等波动</option>
+            <option value="寻求高波动机会">寻求高波动机会</option>
+          </select>
+        </div>
+      </div>
+      <button 
+        (click)="analyzeStock()"
+        [disabled]="isLoading()"
+        class="w-full h-11 px-6 font-semibold rounded-lg text-white transition-all duration-300 ease-in-out flex items-center justify-center mt-6"
+        [class.bg-gradient-to-r]="!isLoading()"
+        [class.from-blue-600]="!isLoading()"
+        [class.to-teal-500]="!isLoading()"
+        [class.hover:from-blue-700]="!isLoading()"
+        [class.hover:to-teal-600]="!isLoading()"
+        [class.shadow-md]="!isLoading()"
+        [class.hover:shadow-lg]="!isLoading()"
+        [class.bg-gray-600]="isLoading()"
+        [class.cursor-not-allowed]="isLoading()"
+      >
+        @if (isLoading()) {
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          分析中...
+        } @else {
+          <span>开始分析</span>
+        }
+      </button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="min-h-[400px]">
+      @if (isLoading()) {
+        <div class="flex items-center justify-center h-full pt-16">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      }
+      
+      @if (error()) {
+        <div class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-center" role="alert">
+          <strong class="font-bold">错误: </strong>
+          <span class="block sm:inline">{{ error() }}</span>
+        </div>
+      }
+
+      @if (isFromCache() && analysisSections().length > 0) {
+        <div class="my-6 p-4 bg-gray-800 border border-teal-500/30 rounded-lg text-center fade-in">
+          <p class="text-teal-300 font-semibold">已从本地加载上次的分析结果。</p>
+          <button (click)="clearAndReset()" class="mt-2 text-sm bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg transition-colors">
+            清除已存结果
+          </button>
+        </div>
+      }
+      
+      @if (showPriceUpdateNotification()) {
+        <div class="my-6 p-4 bg-yellow-900/50 border border-yellow-500/50 rounded-lg text-center fade-in flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-yellow-300 font-semibold">价格已更新至 ${{ currentPrice()?.toFixed(2) }}。建议重新分析以获取最新策略。</p>
+          <button (click)="reAnalyzeWithNewPrice()" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors whitespace-nowrap">
+            重新分析
+          </button>
+        </div>
+      }
+
+      @if (analysisSections().length > 0) {
+        <!-- Language Toggle -->
+        <div class="flex justify-end mb-4">
+          <button 
+            (click)="toggleLanguage()" 
+            [disabled]="isLoading() || isBacktesting()"
+            class="px-4 py-2 text-sm font-medium text-gray-200 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.625M21 21l-5.25-11.625M3.75 5.25h16.5M4.5 19.5h15" />
+            </svg>
+            @if(analysisLanguage() === 'zh') {
+              <span>Switch to English</span>
+            } @else {
+              <span>切换到中文</span>
+            }
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+          @for (section of analysisSections(); track section.title) {
+            <div class="fade-in">
+              <app-analysis-card [title]="section.title" [content]="section.content" [icon]="section.icon"></app-analysis-card>
+            </div>
+          }
+        </div>
+        
+        <!-- Backtesting Section -->
+        @if (tradableStrategy()) {
+          <div class="mt-6 fade-in">
+            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+              <div class="flex items-center mb-4">
+                <div class="bg-gray-700 p-2 rounded-lg mr-4">
+                   <svg class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-200">{{ analysisLanguage() === 'zh' ? '策略回测模拟 (过去1年)' : 'Strategy Backtesting (Past 1 Year)' }}</h3>
+              </div>
+              
+              @if (isBacktesting()) {
+                <div class="flex flex-col items-center justify-center space-y-3 py-8">
+                  <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p class="text-gray-300 animate-pulse">{{ analysisLanguage() === 'zh' ? '正在模拟历史数据...' : 'Simulating historical data...'}}</p>
+                </div>
+              } @else if (backtestResult(); as result) {
+                  <div>
+                    @if(result.chartData && result.chartData.length > 0) {
+                      <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-200 mb-2">{{ analysisLanguage() === 'zh' ? '模拟投资组合价值' : 'Simulated Portfolio Value' }}</h4>
+                        <app-backtest-chart [data]="result.chartData"></app-backtest-chart>
+                      </div>
+                    }
+
+                    <table class="w-full text-left border-collapse mb-4 text-sm">
+                      <thead class="border-b border-gray-600">
+                        <tr>
+                          <th class="py-2 pr-2 font-semibold text-gray-300">{{ analysisLanguage() === 'zh' ? '指标' : 'Metric' }}</th>
+                          <th class="py-2 font-semibold text-gray-300">{{ analysisLanguage() === 'zh' ? '结果' : 'Result' }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for(entry of backtestSummaryEntries(); track entry[0]) {
+                          <tr class="border-b border-gray-700">
+                            <td class="py-2 pr-2 text-gray-400">{{ entry[0] }}</td>
+                            <td class="py-2 text-gray-200" [innerHTML]="entry[1]"></td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+
+                    <h4 class="text-lg font-semibold text-gray-200 mt-6 mb-2">{{ analysisLanguage() === 'zh' ? '表现分析' : 'Performance Analysis' }}</h4>
+                    <div class="text-gray-300 prose prose-invert prose-sm max-w-none" [innerHTML]="result.narrative"></div>
+                    
+                    <h4 class="text-lg font-semibold text-gray-200 mt-6 mb-2">{{ analysisLanguage() === 'zh' ? '最终评价' : 'Final Verdict' }}</h4>
+                    <div class="text-gray-300 prose prose-invert prose-sm max-w-none" [innerHTML]="result.verdict"></div>
+                  </div>
+              } @else {
+                <div class="text-center py-4">
+                  <p class="text-gray-400 mb-4">{{ analysisLanguage() === 'zh' ? '运行模拟以评估此策略在过去一年中的表现。' : 'Run a simulation to gauge this strategy\'s performance over the past year.'}}</p>
+                  <button (click)="runBacktest()" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors">
+                    {{ analysisLanguage() === 'zh' ? '运行回测' : 'Run Backtest' }}
+                  </button>
+                </div>
+              }
+
+              @if(backtestError()) {
+                 <div class="mt-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-center" role="alert">
+                    <strong class="font-bold">Error: </strong>
+                    <span class="block sm:inline">{{ backtestError() }}</span>
+                  </div>
+              }
+            </div>
+          </div>
+        }
+
+      } @else if (!isLoading() && !error()) {
+        <div class="text-center pt-16 text-gray-500">
+          <div class="inline-block bg-gray-800 p-6 rounded-full border-2 border-gray-700">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l-2.293-2.293a1 1 0 010-1.414l7-7a1 1 0 011.414 0l7 7a1 1 0 010 1.414L15 21m-5-4h2" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-xl font-semibold">准备分析</h3>
+          <p>输入股票信息，开始获取您的专属策略。</p>
+        </div>
+      }
+    </div>
+
+  </div>
+</main>
